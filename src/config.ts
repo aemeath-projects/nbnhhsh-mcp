@@ -1,6 +1,7 @@
 import { parseArgs } from 'node:util'
 
 import { parseList } from './env.js'
+import { resolveNbnhhshConfig, type NbnhhshConfig } from './nbnhhsh/config.js'
 
 export type Transport = 'stdio' | 'http'
 
@@ -11,6 +12,7 @@ export interface CliOptions {
   path: string
   allowedHosts?: string[]
   allowedOrigins?: string[]
+  nbnhhsh: NbnhhshConfig
   help: boolean
   version: boolean
 }
@@ -58,6 +60,7 @@ export function parseCliOptions(
     path,
     allowedHosts: parseList(env.MCP_ALLOWED_HOSTS),
     allowedOrigins: parseList(env.MCP_ALLOWED_ORIGINS),
+    nbnhhsh: resolveNbnhhshConfig(env),
     help: values.help === true,
     version: values.version === true,
   }

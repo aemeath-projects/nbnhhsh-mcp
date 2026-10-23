@@ -2,10 +2,12 @@ import {
   createMcpHandler,
   hostHeaderValidationResponse,
   originValidationResponse,
-  type McpHandlerRequestOptions,
+  type McpHttpHandler,
 } from '@modelcontextprotocol/server'
 
-import { createServer } from './server.js'
+import { DEFAULT_NBNHHSH_CONFIG, type NbnhhshConfig } from './nbnhhsh/config.js'
+import { NbnhhshService } from './nbnhhsh/service.js'
+import { createServerFactory } from './server.js'
 
 export interface FetchHandlerOptions {
   /** MCP 端点路径，必须以 `/` 开头。 */
@@ -14,26 +16,31 @@ export interface FetchHandlerOptions {
   allowedHosts?: string[]
   /** 允许的 Origin 主机名；未配置时跳过校验。 */
   allowedOrigins?: string[]
+  /** nbnhhsh 上游与缓存配置；未配置时使用默认值。 */
+  nbnhhsh?: NbnhhshConfig
 }
 
-export interface FetchHandler {
-  fetch: (request: Request, options?: McpHandlerRequestOptions) => Promise<Response>
-  close: () => Promise<void>
-}
+/**
+ * 与 SDK 的 `McpHttpHandler` 对齐，保留 `notify` / `bus`，以便后续启用
+ * `subscriptions/listen` 服务端推送能力。
+ */
+export type FetchHandler = Pick<McpHttpHandler, 'fetch' | 'close' | 'notify' | 'bus'>
 
 const DEFAULT_PATH = '/mcp'
-
-const mcpHandler = createMcpHandler(createServer)
 
 /**
  * 创建 web-standard 的 MCP 请求处理器，可同时用于 Node 与 Cloudflare Workers。
  *
- * Node 侧的 socket 级 Host/Origin 校验由 `src/node.ts` 完成；这里只处理
- * HTTP 层可见的校验，因此可直接运行在 Worker 运行时。
+ * Host/Origin 校验在此统一完成，Node 与 Worker 两侧不重复实现；SDK 的
+ * `createMcpHandler` 本身刻意不做校验，因此这里是唯一的校验层。
+ *
+ * service 在每次调用时创建一次并由工厂闭包捕获，缓存的生命周期与 handler 一致。
  */
 export function createFetchHandler(options: FetchHandlerOptions = {}): FetchHandler {
   const path = options.path ?? DEFAULT_PATH
   const { allowedHosts, allowedOrigins } = options
+  const service = new NbnhhshService(options.nbnhhsh ?? DEFAULT_NBNHHSH_CONFIG)
+  const mcpHandler = createMcpHandler(createServerFactory(service))
 
   return {
     async fetch(request, requestOptions) {
@@ -64,5 +71,7 @@ export function createFetchHandler(options: FetchHandlerOptions = {}): FetchHand
       return mcpHandler.fetch(request, requestOptions)
     },
     close: () => mcpHandler.close(),
+    notify: mcpHandler.notify,
+    bus: mcpHandler.bus,
   }
 }

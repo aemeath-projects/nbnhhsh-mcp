@@ -2,7 +2,8 @@
 import { serveStdio } from '@modelcontextprotocol/server/stdio'
 
 import { parseCliOptions } from './config.js'
-import { createServer } from './server.js'
+import { NbnhhshService } from './nbnhhsh/service.js'
+import { createServerFactory } from './server.js'
 import { SERVER_NAME, SERVER_VERSION } from './version.js'
 
 const HELP_TEXT = `用法：${SERVER_NAME} [选项]
@@ -21,7 +22,11 @@ const HELP_TEXT = `用法：${SERVER_NAME} [选项]
   MCP_PORT                  HTTP 监听端口
   MCP_PATH                  MCP 端点路径
   MCP_ALLOWED_HOSTS         允许的 Host 主机名，逗号分隔
-  MCP_ALLOWED_ORIGINS       允许的 Origin 主机名，逗号分隔`
+  MCP_ALLOWED_ORIGINS       允许的 Origin 主机名，逗号分隔
+  NBNHHSH_API_BASE          nbnhhsh 上游 API 根地址
+  NBNHHSH_TIMEOUT_MS        上游请求超时（毫秒）
+  NBNHHSH_CACHE_TTL_MS      缓存有效期（毫秒，0 表示禁用）
+  NBNHHSH_CACHE_MAX_ENTRIES 缓存容量上限`
 
 async function main(): Promise<void> {
   const options = parseCliOptions(process.argv.slice(2), process.env)
@@ -37,7 +42,8 @@ async function main(): Promise<void> {
   }
 
   if (options.transport === 'stdio') {
-    const handle = serveStdio(createServer)
+    const service = new NbnhhshService(options.nbnhhsh)
+    const handle = serveStdio(createServerFactory(service))
     console.error(`${SERVER_NAME} ${SERVER_VERSION} 已启动（stdio）`)
 
     const shutdown = (): void => {

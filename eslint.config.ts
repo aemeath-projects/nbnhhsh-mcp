@@ -104,7 +104,14 @@ export default defineConfig(
     },
   },
   {
-    files: ['src/http.ts', 'src/server.ts', 'src/worker.ts', 'src/env.ts', 'src/version.ts'],
+    files: [
+      'src/http.ts',
+      'src/server.ts',
+      'src/worker.ts',
+      'src/env.ts',
+      'src/version.ts',
+      'src/nbnhhsh/**/*.ts',
+    ],
     rules: {
       'no-restricted-imports': [
         'error',
