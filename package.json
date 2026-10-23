@@ -1,6 +1,6 @@
 {
   "name": "@aemeath-projects/nbnhhsh-mcp",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "「能不能好好说话？」MCP 服务器",
   "type": "module",
   "main": "./dist/index.js",
