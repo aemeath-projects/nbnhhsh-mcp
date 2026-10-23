@@ -1,5 +1,4 @@
 import { McpServer, type McpServerFactory } from '@modelcontextprotocol/server'
-import { z } from 'zod'
 
 import { DEFAULT_NBNHHSH_CONFIG } from './nbnhhsh/config.js'
 import { NbnhhshService } from './nbnhhsh/service.js'
@@ -30,7 +29,6 @@ export function createServerWithService(service: NbnhhshService): McpServer {
     { instructions: SERVER_INSTRUCTIONS },
   )
 
-  registerPingTool(server)
   registerGuessTool(server, service)
   registerExplainTextTool(server, service)
 
@@ -45,19 +43,4 @@ export function createServerWithService(service: NbnhhshService): McpServer {
  */
 export function createServerFactory(service: NbnhhshService): McpServerFactory {
   return () => createServerWithService(service)
-}
-
-function registerPingTool(server: McpServer): void {
-  server.registerTool(
-    'ping',
-    {
-      title: 'Ping',
-      description: '健康检查工具，始终返回 pong。',
-      inputSchema: z.object({}),
-      annotations: { readOnlyHint: true, idempotentHint: true },
-    },
-    () => ({
-      content: [{ type: 'text', text: 'pong' }],
-    }),
-  )
 }

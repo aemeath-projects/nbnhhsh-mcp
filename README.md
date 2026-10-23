@@ -8,7 +8,7 @@
 - **Streamable HTTP**：Node 原生 `node:http` + 官方 `@modelcontextprotocol/node` 适配器。
 - **Cloudflare Workers**：直接导出 web-standard `fetch`，由 Cloudflare Workers Builds 自动构建部署。
 
-当前提供 `ping`（健康检查）、`guess`（批量查询缩写）与 `explain_text`（从文本提取并解释）三个工具。
+当前提供 `guess`（批量查询缩写）与 `explain_text`（从文本提取并解释）两个工具。
 
 ## 功能与工具
 
@@ -111,23 +111,17 @@ curl -s -X POST http://127.0.0.1:3000/mcp \
   -H 'Accept: application/json, text/event-stream' \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
 
-# 调用 ping
-curl -s -X POST http://127.0.0.1:3000/mcp \
-  -H 'Content-Type: application/json' \
-  -H 'Accept: application/json, text/event-stream' \
-  -d '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"ping","arguments":{}}}'
-
 # 调用 guess
 curl -s -X POST http://127.0.0.1:3000/mcp \
   -H 'Content-Type: application/json' \
   -H 'Accept: application/json, text/event-stream' \
-  -d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"guess","arguments":{"words":["yyds","xswl"],"limit":3}}}'
+  -d '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"guess","arguments":{"words":["yyds","xswl"],"limit":3}}}'
 
 # 调用 explain_text
 curl -s -X POST http://127.0.0.1:3000/mcp \
   -H 'Content-Type: application/json' \
   -H 'Accept: application/json, text/event-stream' \
-  -d '{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"explain_text","arguments":{"text":"我永远喜欢 yyds，这波操作 xswl","limit":3}}}'
+  -d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"explain_text","arguments":{"text":"我永远喜欢 yyds，这波操作 xswl","limit":3}}}'
 ```
 
 Node 侧默认绑定 `127.0.0.1`，并启用 localhost 级别的 Host/Origin 校验。若需要监听
