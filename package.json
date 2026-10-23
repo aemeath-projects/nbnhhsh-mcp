@@ -1,7 +1,7 @@
 {
   "name": "@aemeath-projects/nbnhhsh-mcp",
-  "version": "0.1.0",
-  "description": "MCP server skeleton for nbnhhsh",
+  "version": "0.0.0",
+  "description": "「能不能好好说话？」MCP 服务器",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
