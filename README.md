@@ -1,6 +1,6 @@
 # nbnhhsh-mcp
 
-「能不能好好说话？」（[itorr/nbnhhsh](https://github.com/itorr/nbnhhsh)）的 MCP Server，
+[「能不能好好说话？」](https://lab.magiconch.com/nbnhhsh/) 的 MCP Server，
 为 LLM 客户端提供中文互联网拼音首字母缩写的候选释义。
 
 ![NPM Version](https://img.shields.io/npm/v/%40aemeath-projects%2Fnbnhhsh-mcp?style=for-the-badge)
