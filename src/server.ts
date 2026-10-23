@@ -16,8 +16,8 @@ const DEFAULT_SERVICE = new NbnhhshService(DEFAULT_NBNHHSH_CONFIG)
  * 创建一个 MCP Server 实例。
  *
  * SDK 的 `McpServerFactory` 会把 `McpRequestContext` 作为第一个参数传入，
- * 因此这里刻意保持零参数，避免上下文被误认为配置项。需要自定义配置时使用
- * `createServerWithService` 或 `createServerFactory`。
+ * 因此这里刻意保持零参数，避免上下文被误认为配置项。按环境配置缓存由
+ * CLI / HTTP 入口内部构造带 service 的工厂完成，不属于公共导出面。
  */
 export function createServer(): McpServer {
   return createServerWithService(DEFAULT_SERVICE)
